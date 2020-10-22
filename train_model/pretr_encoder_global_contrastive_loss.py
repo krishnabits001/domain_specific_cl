@@ -179,28 +179,28 @@ tr_loss_list=[]
 # loop over all the epochs to pre-train the Encoder Network.
 for epoch_i in range(start_epoch,n_epochs):
 
-    if (parse_config.global_loss_exp_no == 0):
-        #########################
-        # G^{R} -  default loss formulation as in simCLR (sample images in a batch from all volumes)
-        #########################
-        # original images batch sampled from unlabeled images
-        img_batch = shuffle_minibatch([unl_imgs], batch_size=cfg.batch_size_ft, labels_present=0)
+    # if (parse_config.global_loss_exp_no == 0):
+    #     #########################
+    #     # G^{R} -  default loss formulation as in simCLR (sample images in a batch from all volumes)
+    #     #########################
+    #     # original images batch sampled from unlabeled images
+    #     img_batch = shuffle_minibatch([unl_imgs], batch_size=cfg.batch_size_ft, labels_present=0)
+    #
+    #     # make 2 different sets of images from this chosen batch.
+    #     # Each set is applied with different set of crop and intensity augmentation (aug) - brightness + distortion
+    #
+    #     # Set 1 - random crop followed by random intensity aug
+    #     crop_batch1 = crop_batch([img_batch], cfg, cfg.batch_size_ft, parse_config.bbox_dim)
+    #     color_batch1 = sess.run(ae_rc['rd_fin'], feed_dict={ae_rc['x_tmp']: crop_batch1})
+    #
+    #     # Set 2 - different random crop followed by random intensity aug
+    #     crop_batch2 = crop_batch([img_batch], cfg, cfg.batch_size_ft, parse_config.bbox_dim)
+    #     color_batch2 = sess.run(ae_rc['rd_fin'], feed_dict={ae_rc['x_tmp']: crop_batch2})
+    #
+    #     # Stitch these 2 augmented sets into 1 batch for pre-training
+    #     cat_batch = stitch_two_crop_batches([color_batch1, color_batch2], cfg, cfg.batch_size_ft)
 
-        # make 2 different sets of images from this chosen batch.
-        # Each set is applied with different set of crop and intensity augmentation (aug) - brightness + distortion
-
-        # Set 1 - random crop followed by random intensity aug
-        crop_batch1 = crop_batch([img_batch], cfg, cfg.batch_size_ft, parse_config.bbox_dim)
-        color_batch1 = sess.run(ae_rc['rd_fin'], feed_dict={ae_rc['x_tmp']: crop_batch1})
-
-        # Set 2 - different random crop followed by random intensity aug
-        crop_batch2 = crop_batch([img_batch], cfg, cfg.batch_size_ft, parse_config.bbox_dim)
-        color_batch2 = sess.run(ae_rc['rd_fin'], feed_dict={ae_rc['x_tmp']: crop_batch2})
-
-        # Stitch these 2 augmented sets into 1 batch for pre-training
-        cat_batch = stitch_two_crop_batches([color_batch1, color_batch2], cfg, cfg.batch_size_ft)
-
-    elif(parse_config.global_loss_exp_no==1):
+    if(parse_config.global_loss_exp_no==1):
         #########################
         # G^{D-} - prevent negatives to be contrasted for images coming from corresponding partitions from other volumes for a given positive image.
         #########################
@@ -262,16 +262,16 @@ for epoch_i in range(start_epoch,n_epochs):
         # (d) Set 2's 2 different augmented versions concatenated (aug_batch2)
         cat_batch=stitch_batch_global_loss_gd(cfg,img_batch,aug_batch1,img_batch_t2,aug_batch2,n_parts)
 
-    elif (parse_config.global_loss_exp_no == 3 or parse_config.global_loss_exp_no == 4):
+    elif (parse_config.global_loss_exp_no == 4):
         #########################
         # G^{D} - as in (1) + additionally match positive image to corresponding slice from similar partition in another volume
         #########################
-        if (parse_config.bt_size != 12):
-            n_vols, n_parts = len(unl_list), parse_config.n_parts
+        if (parse_config.bt_size!=12):
+            n_vols,n_parts=len(unl_list),parse_config.n_parts
         else:
-            n_vols, n_parts = 5, parse_config.n_parts
+            n_vols,n_parts=5,parse_config.n_parts
 
-        n_vols, n_parts = len(unl_list), parse_config.n_parts
+        n_vols,n_parts=len(unl_list),parse_config.n_parts
 
         # original images batch sampled from unlabeled images
         # First, we randomly select 'm' volumes out of M. Then, we sample 1 image for each partition of the selected 'm' volumes. Overall we get m * n_parts images.

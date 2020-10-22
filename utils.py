@@ -806,9 +806,12 @@ def stitch_batch_global_loss_gdnew(cfg,batch1,batch2,batch3,batch4,batch5,batch6
     Create a merged batch of input 3 batches of 2D images.
     input param:
          cfg: config parameters
-         batch1: batch one - original image batch
+         batch1: batch one - One set of original images batch
          batch2: batch two - batch one with one set of random crop + intensity augmentations
          batch3: batch three - batch one with another set of random crop + intensity augmentations. This is different to batch two.
+         batch4: batch four - another set of different original images batch to batch 1
+         batch5: batch five - batch two with one set of random crop + intensity augmentations
+         batch6: batch six - batch two with another set of random crop + intensity augmentations. This is different to batch five.
          n_parts: number of partitions per 3D volume
     return:
          fin_batch: merged batch of 3 input batches one, two and three

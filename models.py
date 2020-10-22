@@ -138,12 +138,6 @@ class modelObj:
 
         # No of channels in each layer
         no_filters = [1, 16, 32, 64, 128, 128]
-
-        if(self.num_classes==3):
-            class_weights = tf.constant([[0.05, 0.5, 0.45]],name='class_weights')
-        elif(self.num_classes==4):
-            class_weights = tf.constant([[0.1, 0.3, 0.3, 0.3]],name='class_weights')
-
         num_channels=self.num_channels
 
         ###################################
@@ -166,48 +160,48 @@ class modelObj:
 
         net_global_loss=0
 
-        if(global_loss_exp_no==0):
-            ######################
-            # G^{R} - Like in simCLR [12]
-            ######################
-            bs=2*self.batch_size
-            #loop over each pair of positive images in the batch to calculate the Net global contrastive loss over the whole batch.
-            for pos_index in range(0,bs,2):
-                #indexes of positive pair of samples (x_1,x_2)
-                num_i1=np.arange(pos_index,pos_index+1,dtype=np.int32)
-                num_i2=np.arange(pos_index+1,pos_index+2,dtype=np.int32)
+        # if(global_loss_exp_no==0):
+        #     ######################
+        #     # G^{R} - Like in simCLR [12]
+        #     ######################
+        #     bs=2*self.batch_size
+        #     #loop over each pair of positive images in the batch to calculate the Net global contrastive loss over the whole batch.
+        #     for pos_index in range(0,bs,2):
+        #         #indexes of positive pair of samples (x_1,x_2)
+        #         num_i1=np.arange(pos_index,pos_index+1,dtype=np.int32)
+        #         num_i2=np.arange(pos_index+1,pos_index+2,dtype=np.int32)
+        #
+        #         #indexes of corresponding negative samples as per positive pair of samples (x_1,x_2)
+        #         den_index_i1=np.arange(0,bs,dtype=np.int32)
+        #         den_index_i1 = np.delete(den_index_i1, pos_index)
+        #         den_index_i2=np.arange(0,bs,dtype=np.int32)
+        #         den_index_i2 = np.delete(den_index_i2, pos_index+1)
+        #
+        #         # gather required positive samples (x_1,x_2) for the numerator term
+        #         x_num_i1=tf.gather(reg_pred,num_i1)
+        #         x_num_i2=tf.gather(reg_pred,num_i2)
+        #         # gather required corresponding negative samples for the denominator term
+        #         x_den_i1=tf.gather(reg_pred,den_index_i1)
+        #         x_den_i2=tf.gather(reg_pred,den_index_i2)
+        #         #print('a1',x_num_i1,x_den_i1,x_num_i2,x_den_i2)
+        #
+        #         #calculate cosine similarity score as in simCLR[12] + global contrastive loss for the pair of positive images (x_1,x_2)
+        #         # loss for positive image x_1 (num_i1_loss)
+        #         # numerator of loss term (num_i1_ss), & denominator of loss term (den_i1_ss)
+        #         num_i1_ss=self.cos_sim(x_num_i1,x_num_i2,temp_fac)
+        #         den_i1_ss=self.cos_sim(x_num_i1,x_den_i1,temp_fac)
+        #         num_i1_loss=-tf.log(tf.exp(num_i1_ss)/tf.math.reduce_sum(tf.exp(den_i1_ss)))
+        #         net_global_loss = net_global_loss + num_i1_loss
+        #         #print('a2',num_i1_ss,den_i1_ss,num_i1_loss)
+        #
+        #         # loss for positive image x_2 (num_i2_loss)
+        #         # numerator of loss term (num_i2_ss), & denominator of loss term (den_i2_ss)
+        #         num_i2_ss=self.cos_sim(x_num_i2,x_num_i1,temp_fac)
+        #         den_i2_ss=self.cos_sim(x_num_i2,x_den_i2,temp_fac)
+        #         num_i2_loss=-tf.log(tf.exp(num_i2_ss)/tf.math.reduce_sum(tf.exp(den_i2_ss)))
+        #         net_global_loss = net_global_loss + num_i2_loss
 
-                #indexes of corresponding negative samples as per positive pair of samples (x_1,x_2)
-                den_index_i1=np.arange(0,bs,dtype=np.int32)
-                den_index_i1 = np.delete(den_index_i1, pos_index)
-                den_index_i2=np.arange(0,bs,dtype=np.int32)
-                den_index_i2 = np.delete(den_index_i2, pos_index+1)
-
-                # gather required positive samples (x_1,x_2) for the numerator term
-                x_num_i1=tf.gather(reg_pred,num_i1)
-                x_num_i2=tf.gather(reg_pred,num_i2)
-                # gather required corresponding negative samples for the denominator term
-                x_den_i1=tf.gather(reg_pred,den_index_i1)
-                x_den_i2=tf.gather(reg_pred,den_index_i2)
-                #print('a1',x_num_i1,x_den_i1,x_num_i2,x_den_i2)
-
-                #calculate cosine similarity score as in simCLR[12] + global contrastive loss for the pair of positive images (x_1,x_2)
-                # loss for positive image x_1 (num_i1_loss)
-                # numerator of loss term (num_i1_ss), & denominator of loss term (den_i1_ss)
-                num_i1_ss=self.cos_sim(x_num_i1,x_num_i2,temp_fac)
-                den_i1_ss=self.cos_sim(x_num_i1,x_den_i1,temp_fac)
-                num_i1_loss=-tf.log(tf.exp(num_i1_ss)/tf.math.reduce_sum(tf.exp(den_i1_ss)))
-                net_global_loss = net_global_loss + num_i1_loss
-                #print('a2',num_i1_ss,den_i1_ss,num_i1_loss)
-
-                # loss for positive image x_2 (num_i2_loss)
-                # numerator of loss term (num_i2_ss), & denominator of loss term (den_i2_ss)
-                num_i2_ss=self.cos_sim(x_num_i2,x_num_i1,temp_fac)
-                den_i2_ss=self.cos_sim(x_num_i2,x_den_i2,temp_fac)
-                num_i2_loss=-tf.log(tf.exp(num_i2_ss)/tf.math.reduce_sum(tf.exp(den_i2_ss)))
-                net_global_loss = net_global_loss + num_i2_loss
-
-        elif(global_loss_exp_no==1):
+        if(global_loss_exp_no==1):
             ######################
             # G^{D-} - Proposed variant
             # We split each volume into n_parts and select 1 image from each n_part of the volume
@@ -406,7 +400,7 @@ class modelObj:
                     den_i4_i2_ss=self.cos_sim(x_num_i4, x_den, temp_fac)
                     num_i4_i2_loss=-tf.log(tf.exp(num_i2_i4_ss)/(tf.exp(num_i2_i4_ss)+tf.math.reduce_sum(tf.exp(den_i4_i2_ss))))
                     net_global_loss = net_global_loss + num_i4_i2_loss
-        elif(global_loss_exp_no==3 or global_loss_exp_no==4):
+        elif(global_loss_exp_no==4):
             ######################
             # G^{D} - Proposed variant
             # We split each volume into n_parts and select 1 image from each n_part of the volume
@@ -553,32 +547,31 @@ class modelObj:
                     num_i6_i5_loss=-tf.log(tf.exp(num_i5_i6_ss)/(tf.exp(num_i5_i6_ss)+tf.math.reduce_sum(tf.exp(den_i6_i5_ss))))
                     net_global_loss = net_global_loss + num_i6_i5_loss
 
-                    if(global_loss_exp_no==4):
-                        # for positive pair (x_a_i1, x_a_j2): (i2,i5)
-                        # numerator of loss term (num_i2_i4_ss) & denominator of loss term (den_i2_i4_ss) & loss (num_i2_i4_loss)
-                        num_i2_i5_ss=self.cos_sim(x_num_i2, x_num_i5, temp_fac)
-                        den_i2_i5_ss=self.cos_sim(x_num_i2, x_den, temp_fac)
-                        num_i2_i5_loss=-tf.log(tf.exp(num_i2_i5_ss)/(tf.exp(num_i2_i5_ss)+tf.math.reduce_sum(tf.exp(den_i2_i5_ss))))
-                        net_global_loss = net_global_loss + num_i2_i5_loss
-                        # for positive pair (x_a_j1, x_a_i1)
-                        # numerator same & denominator of loss term (den_i4_i2_ss) & loss (num_i4_i2_loss)
-                        den_i5_i2_ss=self.cos_sim(x_num_i5, x_den, temp_fac)
-                        num_i5_i2_loss=-tf.log(tf.exp(num_i2_i5_ss)/(tf.exp(num_i2_i5_ss)+tf.math.reduce_sum(tf.exp(den_i5_i2_ss))))
-                        net_global_loss = net_global_loss + num_i5_i2_loss
+                    # for positive pair (x_a_i1, x_a_j2): (i2,i5)
+                    # numerator of loss term (num_i2_i4_ss) & denominator of loss term (den_i2_i4_ss) & loss (num_i2_i4_loss)
+                    num_i2_i5_ss=self.cos_sim(x_num_i2, x_num_i5, temp_fac)
+                    den_i2_i5_ss=self.cos_sim(x_num_i2, x_den, temp_fac)
+                    num_i2_i5_loss=-tf.log(tf.exp(num_i2_i5_ss)/(tf.exp(num_i2_i5_ss)+tf.math.reduce_sum(tf.exp(den_i2_i5_ss))))
+                    net_global_loss = net_global_loss + num_i2_i5_loss
+                    # for positive pair (x_a_j1, x_a_i1)
+                    # numerator same & denominator of loss term (den_i4_i2_ss) & loss (num_i4_i2_loss)
+                    den_i5_i2_ss=self.cos_sim(x_num_i5, x_den, temp_fac)
+                    num_i5_i2_loss=-tf.log(tf.exp(num_i2_i5_ss)/(tf.exp(num_i2_i5_ss)+tf.math.reduce_sum(tf.exp(den_i5_i2_ss))))
+                    net_global_loss = net_global_loss + num_i5_i2_loss
 
-                        # for positive pair (x_a_i2, x_a_j2): (i3,i6)
-                        # numerator of loss term (num_i2_i4_ss) & denominator of loss term (den_i2_i4_ss) & loss (num_i2_i4_loss)
-                        num_i3_i6_ss=self.cos_sim(x_num_i3, x_num_i6, temp_fac)
-                        den_i3_i6_ss=self.cos_sim(x_num_i3, x_den, temp_fac)
-                        num_i3_i6_loss=-tf.log(tf.exp(num_i3_i6_ss)/(tf.exp(num_i3_i6_ss)+tf.math.reduce_sum(tf.exp(den_i3_i6_ss))))
-                        net_global_loss = net_global_loss + num_i3_i6_loss
-                        # for positive pair (x_a_j2, x_a_i2)
-                        # numerator same & denominator of loss term (den_i4_i2_ss) & loss (num_i4_i2_loss)
-                        den_i6_i3_ss=self.cos_sim(x_num_i6, x_den, temp_fac)
-                        num_i6_i3_loss=-tf.log(tf.exp(num_i3_i6_ss)/(tf.exp(num_i3_i6_ss)+tf.math.reduce_sum(tf.exp(den_i6_i3_ss))))
-                        net_global_loss = net_global_loss + num_i6_i3_loss
+                    # for positive pair (x_a_i2, x_a_j2): (i3,i6)
+                    # numerator of loss term (num_i2_i4_ss) & denominator of loss term (den_i2_i4_ss) & loss (num_i2_i4_loss)
+                    num_i3_i6_ss=self.cos_sim(x_num_i3, x_num_i6, temp_fac)
+                    den_i3_i6_ss=self.cos_sim(x_num_i3, x_den, temp_fac)
+                    num_i3_i6_loss=-tf.log(tf.exp(num_i3_i6_ss)/(tf.exp(num_i3_i6_ss)+tf.math.reduce_sum(tf.exp(den_i3_i6_ss))))
+                    net_global_loss = net_global_loss + num_i3_i6_loss
+                    # for positive pair (x_a_j2, x_a_i2)
+                    # numerator same & denominator of loss term (den_i4_i2_ss) & loss (num_i4_i2_loss)
+                    den_i6_i3_ss=self.cos_sim(x_num_i6, x_den, temp_fac)
+                    num_i6_i3_loss=-tf.log(tf.exp(num_i3_i6_ss)/(tf.exp(num_i3_i6_ss)+tf.math.reduce_sum(tf.exp(den_i6_i3_ss))))
+                    net_global_loss = net_global_loss + num_i6_i3_loss
 
-                    
+
 
         if(global_loss_exp_no==0):
             bs=2*self.batch_size
@@ -589,7 +582,7 @@ class modelObj:
         elif(global_loss_exp_no==2):
             bs=4*self.batch_size
             reg_cost=net_global_loss/bs
-        elif(global_loss_exp_no==3 or global_loss_exp_no==4):
+        elif(global_loss_exp_no==4):
             bs=6*self.batch_size
             reg_cost=net_global_loss/bs
         else:
@@ -632,11 +625,13 @@ class modelObj:
         no_filters=[1, 16, 32, 64, 128, 128]
 
         if(self.num_classes==2):
-            class_weights = tf.constant([[0.15, 0.85]],name='class_weights')
+            class_weights = tf.constant([[0.1, 0.9]],name='class_weights')
         elif(self.num_classes==3):
-            class_weights = tf.constant([[0.05, 0.5, 0.45]],name='class_weights')
+            class_weights = tf.constant([[0.1, 0.45, 0.45]],name='class_weights')
         elif(self.num_classes==4):
             class_weights = tf.constant([[0.1, 0.3, 0.3, 0.3]],name='class_weights')
+        elif (self.num_classes==8):
+            class_weights = tf.constant([[0.09, 0.13, 0.13, 0.13, 0.13, 0.13, 0.13, 0.13]], name='class_weights')
 
         num_channels=self.num_channels
 
@@ -654,7 +649,7 @@ class modelObj:
         else:
             y_l_onehot=y_l
 
-        print('x,y_l_onehot',x,y_l_onehot)
+        #print('x,y_l_onehot',x,y_l_onehot)
 
         ###################################
         # Encoder network
@@ -671,14 +666,14 @@ class modelObj:
         ###################################
         scale_fac=2
         dec_c6_up = layers.upsample_layer(ip_layer=enc_c6_b, method=self.interp_val, scale_factor=int(scale_fac))
-        print('dec 2 large up',dec_c6_up)
+        #print('dec 2 large up',dec_c6_up)
         dec_dc6 = layers.conv2d_layer(ip_layer=dec_c6_up,name='dec_dc6', kernel_size=(fs_de,fs_de),num_filters=no_filters[5], use_relu=True, use_batch_norm=True, training_phase=train_phase)
         dec_cat_c6 = tf.concat((dec_dc6,enc_c5_b),axis=3,name='dec_cat_c6')
         dec_c5_a = layers.conv2d_layer(ip_layer=dec_cat_c6,name='dec_c5_a', num_filters=no_filters[5], use_relu=True, use_batch_norm=True, training_phase=train_phase)
         dec_c5_b = layers.conv2d_layer(ip_layer=dec_c5_a,name='dec_c5_b', num_filters=no_filters[5], use_relu=True, use_batch_norm=True, training_phase=train_phase)
 
         dec_c5_up = layers.upsample_layer(ip_layer=dec_c5_b, method=self.interp_val, scale_factor=int(scale_fac))
-        print('dec large up',dec_c6_up,dec_c5_up)
+        #print('dec large up',dec_c6_up,dec_c5_up)
         dec_dc5 = layers.conv2d_layer(ip_layer=dec_c5_up,name='dec_dc5', kernel_size=(fs_de,fs_de),num_filters=no_filters[4], use_relu=True, use_batch_norm=True, training_phase=train_phase)
         dec_cat_c5 = tf.concat((dec_dc5,enc_c4_b),axis=3,name='dec_cat_c5')
         dec_c4_a = layers.conv2d_layer(ip_layer=dec_cat_c5,name='dec_c4_a', num_filters=no_filters[4], use_relu=True, use_batch_norm=True, training_phase=train_phase)
@@ -812,7 +807,7 @@ class modelObj:
 
         scale_fac=2
         dec_c6_up = layers.upsample_layer(ip_layer=enc_c6_b, method=self.interp_val, scale_factor=int(scale_fac))
-        print('dec 2 large up',dec_c6_up)
+        #print('dec 2 large up',dec_c6_up)
         dec_dc6 = layers.conv2d_layer(ip_layer=dec_c6_up,name='dec_dc6', kernel_size=(fs_de,fs_de),num_filters=no_filters[5], use_relu=True, use_batch_norm=True, training_phase=train_phase)
         dec_cat_c6 = tf.concat((dec_dc6,enc_c5_b),axis=3,name='dec_cat_c6')
         dec_c5_a = layers.conv2d_layer(ip_layer=dec_cat_c6,name='dec_c5_a', num_filters=no_filters[5], use_relu=True, use_batch_norm=True, training_phase=train_phase)
@@ -822,7 +817,7 @@ class modelObj:
             # No of decoder blocks = 1
             tmp_dec_layer=dec_c5_b
             tmp_no_filters=no_filters[4]
-            print('decoder level I', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
+            #print('decoder level I', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
 
             if(no_of_decoder_blocks>=2):
                 # No of decoder blocks =  2
@@ -833,7 +828,7 @@ class modelObj:
                 dec_c4_b = layers.conv2d_layer(ip_layer=dec_c4_a, name='dec_c4_b', num_filters=no_filters[4],use_relu=True, use_batch_norm=True, training_phase=train_phase)
                 tmp_dec_layer = dec_c4_b
                 tmp_no_filters=no_filters[4]
-                print('decoder level II', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
+                #print('decoder level II', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
 
                 if(no_of_decoder_blocks>=3):
                     # No of decoder blocks = 3
@@ -844,7 +839,7 @@ class modelObj:
                     dec_c3_b = layers.conv2d_layer(ip_layer=dec_c3_a, name='dec_c3_b', num_filters=no_filters[3],use_relu=True, use_batch_norm=True, training_phase=train_phase)
                     tmp_dec_layer = dec_c3_b
                     tmp_no_filters=no_filters[3]
-                    print('decoder level III', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
+                    #print('decoder level III', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
 
                     if(no_of_decoder_blocks>=4):
                         # No of decoder blocks = 4
@@ -855,7 +850,7 @@ class modelObj:
                         dec_c2_b = layers.conv2d_layer(ip_layer=dec_c2_a, name='dec_c2_b', num_filters=no_filters[2],use_relu=True, use_batch_norm=True, training_phase=train_phase)
                         tmp_dec_layer = dec_c2_b
                         tmp_no_filters=no_filters[2]
-                        print('decoder level IV', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
+                        #print('decoder level IV', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
 
                         if(no_of_decoder_blocks>=5):
                             # No of decoder blocks = 5 (full decoder)
@@ -865,14 +860,14 @@ class modelObj:
                             dec_c1_a = layers.conv2d_layer(ip_layer=dec_cat_c2, name='dec_c1_a',num_filters=no_filters[1], use_relu=True,use_batch_norm=True, training_phase=train_phase)
                             tmp_dec_layer = dec_c1_a
                             tmp_no_filters=no_filters[1]
-                            print('decoder level V', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
+                            #print('decoder level V', no_of_decoder_blocks, tmp_no_filters, tmp_dec_layer)
 
         #g_2 small network with two 1x1 convolutions
         seg_c1_a = layers.conv2d_layer(ip_layer=tmp_dec_layer,name='seg_c1_a', kernel_size=(1,1), num_filters=tmp_no_filters,use_bias=False, use_relu=True, use_batch_norm=True, training_phase=train_phase)
         seg_c1_b = layers.conv2d_layer(ip_layer=seg_c1_a, name='seg_c1_b', kernel_size=(1, 1),num_filters=tmp_no_filters, use_bias=False, use_relu=False,use_batch_norm=False, training_phase=train_phase)
 
         y_fin_tmp=seg_c1_b
-        print('y_fin',y_fin_tmp)
+        #print('y_fin',y_fin_tmp)
 
         bs=2*self.batch_size
 
@@ -990,7 +985,7 @@ class modelObj:
             #bs=2*self.batch_size
         elif(local_loss_exp_no==0):
             y_fin=y_fin_tmp
-            print('y_fin_local',y_fin)
+            #print('y_fin_local',y_fin)
 
             #loop over each image pair to iterate over all positive local regions within a feature map to calculate the local contrastive loss
             for pos_index in range(0,bs,2):
