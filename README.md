@@ -44,7 +44,7 @@ All the images were bias corrected using N4 algorithm with a threshold value of 
 Image and label pairs are re-sampled (to chosen target resolution) and cropped/zero-padded to a fixed size using "create_cropped_imgs.py" file. <br/>
 
 IV) Train the models.<br/>
-Below commands are an example for ACDC dataset 
+Below commands are an example for ACDC dataset.<br/> 
 The models need to be trained sequentially as follows (check "train_model/pretrain_and_fine_tune_script.sh" script for commands)<br/>
 Steps :<br/>
 1) Step 1: To pre-train the encoder with global loss by incorporating proposed domain knowledge when defining positive and negative pairs.<br/>
