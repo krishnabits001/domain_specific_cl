@@ -57,13 +57,14 @@ python pretr_decoder_local_contrastive_loss.py --dataset=acdc --no_of_tr_imgs=tr
 3) Step 3: We use the pre-trained encoder and decoder weights as initialization and fine-tune to segmentation task using limited annotations.<br/>
 python ft_pretr_encoder_decoder_net_local_loss.py --dataset=acdc --pretr_no_of_tr_imgs=tr52 --local_reg_size=1 --no_of_local_regions=13 --temp_fac=0.1 --global_loss_exp_no=2 --local_loss_exp_no=0 --no_of_decoder_blocks=3 --no_of_neg_local_regions=5 --no_of_tr_imgs=tr1 --comb_tr_imgs=c1 --ver=0 
 
-To train the baseline with affine transformations for comparison, use the below code file.<br/>
+To train the baseline with affine and random deformations & intensity transformations for comparison, use the below code file.<br/>
 cd train_model/ <br/>
 python tr_baseline.py --dataset=acdc --no_of_tr_imgs=tr1 --comb_tr_imgs=c1 --ver=0
 
 V) Config files contents.<br/>
 One can modify the contents of the below 2 config files to run the required experiments.<br/>
 experiment_init directory contains 2 files.<br/>
+Example for ACDC dataset:<br/>
 1) init_acdc.py <br/>
 --> contains the config details like target resolution, image dimensions, data path where the dataset is stored and path to save the trained models.<br/>
 2) data_cfg_acdc.py <br/>
