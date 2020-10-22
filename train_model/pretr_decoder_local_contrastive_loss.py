@@ -57,7 +57,7 @@ parser.add_argument('--pretr_ver', type=int, default=0)
 # 0 - default loss formulation as in simCLR (sample images in a batch from all volumes)
 # 1 - prevent negatives to be contrasted for images coming from corresponding partitions from other volumes for a given positive image.
 # 2 - as in (1) + additionally match positive image to corresponding slice from similar partition in another volume
-parser.add_argument('--global_loss_exp_no', type=int, default=0)
+parser.add_argument('--global_loss_exp_no', type=int, default=2)
 
 # type of local_loss_exp_no for Local contrastive loss
 # 0 - default loss formulation. Sample local regions from two images. these 2 images are intensity transformed version of same image.

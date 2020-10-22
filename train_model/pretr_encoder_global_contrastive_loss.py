@@ -44,7 +44,7 @@ parser.add_argument('--bbox_dim', type=int, default=100)
 # 0 - G^{R}  - default loss formulation as in simCLR (sample images in a batch from all volumes)
 # 1 - G^{D-} - prevent negatives to be contrasted for images coming from corresponding partitions from other volumes for a given positive image.
 # 2 - G^{D}  - as in (1) + additionally match positive image to corresponding slice from similar partition in another volume
-parser.add_argument('--global_loss_exp_no', type=int, default=0)
+parser.add_argument('--global_loss_exp_no', type=int, default=2)
 #no_of_partitions selected per volume
 parser.add_argument('--n_parts', type=int, default=4)
 
