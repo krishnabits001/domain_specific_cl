@@ -349,7 +349,7 @@ val_label_orig,val_img_crop,val_label_crop,pixel_val_list=load_val_imgs(val_list
 
 # get test volumes id list
 print('get test volumes list')
-test_list = data_list.test_data(parse_config.no_of_tr_imgs)
+test_list = data_list.test_data()
 ######################################
 
 ######################################
