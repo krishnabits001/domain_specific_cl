@@ -5,7 +5,7 @@ With the proposed pre-training method using Contrastive learning, we get competi
 https://arxiv.org/abs/2006.10511 <br/>
 
 **Observations / Conclusions:** <br/>
-1) For medical image segmentation, proposed contrastive pre-training strategy incorporating domain knowledge present naturally across medical volumes yields better perforamnce than baseline, other pre-training methods, semi-supervised and data augmentation methods.
+1) For medical image segmentation, proposed contrastive pre-training strategy incorporating domain knowledge present naturally across medical volumes yields better performance than baseline, other pre-training methods, semi-supervised and data augmentation methods.
 2) Proposed local contrastive loss, an extension of global loss, provides additional boost in performance by learning distinctive local-level representation to disinguish between neighbouring regions
 3) Proposed pre-training strategy is complementary to semi-supervised and data augmentation methods. Combining them yields further boost in accuracy.
 
