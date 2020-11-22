@@ -70,7 +70,7 @@ Example for ACDC dataset:<br/>
 --> contains an example of data config details where one can set the patient ids which they want to use as train, validation and test images.<br/>
 
 
-###Current Bibtex citation: 
+**Current Bibtex citation:** 
 
 	@article{chaitanya2020contrastive,
   	title={Contrastive learning of global and local features for medical image segmentation with limited annotations},
