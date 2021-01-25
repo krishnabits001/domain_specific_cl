@@ -204,7 +204,7 @@ for epoch_i in range(start_epoch,n_epochs):
     ld_img_batch,ld_label_batch=augmentation_function([ld_img_batch,ld_label_batch],dt)
     if(parse_config.rd_en==1 or parse_config.ri_en==1):
         # Apply random augmentations - random deformations + random contrast & brightness values
-        ld_img_batch,ld_label_batch=create_rand_augs(cfg,parse_config,sess,ae_rd,ae_ri,ld_img_batch,ld_label_batch)
+        ld_img_batch,ld_label_batch=create_rand_augs(cfg,parse_config,sess,ae_rd,ae_rc,ld_img_batch,ld_label_batch)
 
     #Run optimizer update on the chosen batch of training data from labeled set
     train_summary,loss,_=sess.run([ae['train_summary'],ae['seg_cost'],ae['optimizer_unet_all']],\
