@@ -70,18 +70,8 @@ Example for ACDC dataset:<br/>
 --> contains an example of data config details where one can set the patient ids which they want to use as train, validation and test images.<br/>
 
 
-**Current Bibtex citation:** 
+**Bibtex citation:** 
 
-	@article{chaitanya2020contrastive,
-	  title={Contrastive learning of global and local features for medical image segmentation with limited annotations},
-	  author={Chaitanya, Krishna and Erdil, Ertunc and Karani, Neerav and Konukoglu, Ender},
-	  journal={Advances in Neural Information Processing Systems},
-	  volume={33},
-	  year={2020}
-	}
-
-
-**NeurIPS Bibtex citation:** 
 	@article{chaitanya2020contrastive,
 	  title={Contrastive learning of global and local features for medical image segmentation with limited annotations},
 	  author={Chaitanya, Krishna and Erdil, Ertunc and Karani, Neerav and Konukoglu, Ender},
