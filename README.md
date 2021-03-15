@@ -81,5 +81,10 @@ Example for ACDC dataset:<br/>
 
 
 **NeurIPS Bibtex citation:** <br/>
-Awaiting for Proceedings to be published
-<br/>
+	@article{chaitanya2020contrastive,
+	  title={Contrastive learning of global and local features for medical image segmentation with limited annotations},
+	  author={Chaitanya, Krishna and Erdil, Ertunc and Karani, Neerav and Konukoglu, Ender},
+	  journal={Advances in Neural Information Processing Systems},
+	  volume={33},
+	  year={2020}
+	}
